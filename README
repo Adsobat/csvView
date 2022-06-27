@@ -1,0 +1,6 @@
+## To run
+python main.py resources/testData.csv
+
+## To run tests run
+
+python -m unittest discover test/
