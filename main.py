@@ -52,7 +52,7 @@ def main(path: str, page_length: int):
 
 
 def render_table(table):
-    output = draw_table(table)
+    output = draw_table(table.caption, table.get_body())
     print(output)
 
 

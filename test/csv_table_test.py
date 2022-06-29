@@ -56,7 +56,7 @@ class CsvData(unittest.TestCase):
     def test_get_first_page(self):
         table = CsvTable(SHORT_CSV, page_length=1)
 
-        data = table.get_data()
+        data = table.get_body()
 
         self.assertEqual(1, len(data), "amount of returned rows is wrong")
         self.assertEqual(3, len(data[0]), "amount of returned columns is wrong")
@@ -99,7 +99,7 @@ class CsvData(unittest.TestCase):
         table = CsvTable(SHORT_CSV, page_length=1)
 
         table.increment_page()
-        data = table.get_data()
+        data = table.get_body()
 
         self.assertEqual(1, len(data), "amount of returned rows is wrong")
         self.assertEqual(3, len(data[0]), "amount of returned columns is wrong")
@@ -112,13 +112,19 @@ class CsvData(unittest.TestCase):
         table.set_page_index(1)
 
         table.decrement_page()
-        data = table.get_data()
+        data = table.get_body()
 
         self.assertEqual(1, len(data), "amount of returned rows is wrong")
         self.assertEqual(3, len(data[0]), "amount of returned columns is wrong")
         self.assertEqual("1", data[0][0], "data is wrong")
         self.assertEqual("ä", data[0][1], "data is wrong")
         self.assertEqual("text space", data[0][2], "data is wrong")
+
+    def test_first_page(self):
+        table = CsvTable(SHORT_CSV, page_length=2)
+        table.set_page_index(2)
+
+
 
     def test_load_csv_from_file(self):
         path = "resources/testData.csv"
@@ -127,7 +133,7 @@ class CsvData(unittest.TestCase):
 
         self.assertEqual(2, len(table.data_raw))
         self.assertEqual(3, len(table.caption))
-        self.assertEqual([["1", "ÄÖß", ""], ["2", "ÄÖß", "B"]], table.get_data(), "wrong data loaded")
+        self.assertEqual([["1", "ÄÖß", ""], ["2", "ÄÖß", "B"]], table.get_body(), "wrong data loaded")
         self.assertEqual(["NR", "h1", "h 2"], table.caption, "wrong caption loaded")
 
 

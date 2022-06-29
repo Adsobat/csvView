@@ -24,7 +24,7 @@ class CsvTable(object):
                 self.data_raw.append(convert_csv_line(line))
         self.last_page = _calculate_last_page(self.data_raw, self.page_length)
 
-    def get_data(self) -> List[List[str]]:
+    def get_body(self) -> List[List[str]]:
         start_index = self.get_first_visible_item_index()
         return self.data_raw[start_index: start_index + self.page_length]
 
@@ -46,11 +46,11 @@ class CsvTable(object):
 
     def get_next_page(self):
         self.increment_page()
-        return self.get_data()
+        return self.get_body()
 
     def get_previous_page(self):
         self.decrement_page()
-        return self.get_data()
+        return self.get_body()
 
     def get_current_page_index(self):
         return self._page_index
