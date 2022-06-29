@@ -3,7 +3,6 @@ import unittest
 from csv_table.csv_table import CsvTable
 from table_renderer.table_renderer import _calculate_column_widths, _render_header, _render_data, draw_table
 
-
 SHORT_CSV = [["h1", "h2", "h 3"],
              ["1", "ä", "text space"],
              ["2", "b", "c"],
@@ -42,6 +41,15 @@ class TableRenderer(unittest.TestCase):
                          "1 |ä |text space|\n" +
                          "2 |b |c         |\n" +
                          "3 |d |e         |\n", table_str)
+
+    def test_draw_table__no_body(self):
+        caption = SHORT_CSV[0]
+
+        table_str = draw_table(caption, [])
+
+        self.assertEqual("h1|h2|h 3|\n" +
+                         "--+--+---+\n"
+                         , table_str)
 
 
 if __name__ == '__main__':

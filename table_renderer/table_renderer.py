@@ -48,7 +48,11 @@ def _calculate_row_padding(row: list[str], column_width: list[int]):
 
 
 def _calculate_column_widths(caption: list[str], body: list[list[str]]):
-    column_widths = [len(ele) for ele in caption]
+    if len(caption) == len(body) == 0:
+        return []
+    if len(body) <= 0:
+        return [len(ele) for ele in caption]
+    column_widths = [len(ele) for ele in caption] if len(caption) >= len(body[0]) else [len(ele) for ele in body[0]]
     for row in body:
         for i, ele in enumerate(row):
             column_widths[i] = len(ele) if len(ele) > column_widths[i] else column_widths[i]
