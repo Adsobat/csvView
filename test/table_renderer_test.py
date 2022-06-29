@@ -1,7 +1,7 @@
 import unittest
 
 from csv_table.csv_table import CsvTable
-from table_renderer.table_renderer import _calculate_column_widths, _render_header, _render_data, draw_table
+from table_renderer.table_renderer import _calculate_column_widths, _render_header, _render_data, create_table_markup_str
 
 SHORT_CSV = [["h1", "h2", "h 3"],
              ["1", "ä", "text space"],
@@ -24,7 +24,7 @@ class TableRenderer(unittest.TestCase):
     def test_render_header(self):
         caption, body = SHORT_CSV[0], SHORT_CSV[1:]
 
-        table_str = draw_table(caption, body)
+        table_str = create_table_markup_str(caption, body)
 
         caption = table_str.split("\n")[0]
         seperator = table_str.split("\n")[1]
@@ -34,7 +34,7 @@ class TableRenderer(unittest.TestCase):
     def test_draw_table(self):
         caption, body = SHORT_CSV[0], SHORT_CSV[1:]
 
-        table_str = draw_table(caption, body)
+        table_str = create_table_markup_str(caption, body)
 
         self.assertEqual("h1|h2|h 3       |\n" +
                          "--+--+----------+\n" +
@@ -45,7 +45,7 @@ class TableRenderer(unittest.TestCase):
     def test_draw_table__no_body(self):
         caption = SHORT_CSV[0]
 
-        table_str = draw_table(caption, [])
+        table_str = create_table_markup_str(caption, [])
 
         self.assertEqual("h1|h2|h 3|\n" +
                          "--+--+---+\n"

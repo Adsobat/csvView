@@ -8,7 +8,7 @@ class CsvTable(object):
     data_raw: List[List[str]]
     _page_index: int
     page_length: int
-    last_page: int
+    last_page_index: int
     page_length: int
 
     def __init__(self, csv_raw: List[str], page_length=3):
@@ -22,7 +22,7 @@ class CsvTable(object):
         for line in csv_raw[1:]:
             if len(line) > 0:
                 self.data_raw.append(convert_csv_line(line))
-        self.last_page = _calculate_last_page(self.data_raw, self.page_length)
+        self.last_page_index = _calculate_last_page(self.data_raw, self.page_length)
 
     def get_body(self) -> List[List[str]]:
         start_index = self.get_first_visible_item_index()
@@ -32,17 +32,18 @@ class CsvTable(object):
         return self._page_index * self.page_length
 
     def set_page_index(self, new_page: int):
-        if 0 <= new_page <= self.last_page:
+        if 0 <= new_page <= self.last_page_index:
             self._page_index = new_page
 
-        if new_page < 0:
+        elif new_page < 0:
             self._page_index = 0
 
-        if new_page > self.last_page:
-            self._page_index = self.last_page
+        else:
+            self._page_index = self.last_page_index
+        return self._page_index
 
-    def get_last_page(self):
-        return self.last_page
+    def get_last_page_index(self):
+        return self.last_page_index
 
     def get_next_page(self):
         self.increment_page()
@@ -57,13 +58,23 @@ class CsvTable(object):
 
     def increment_page(self):
         self.set_page_index(self._page_index + 1)
+        return self.get_body()
 
     def decrement_page(self):
         self.set_page_index(self._page_index - 1)
+        return self.get_body()
+
+    def set_page_to_last(self):
+        self.set_page_index(self.last_page_index)
+        return self.get_body()
+
+    def set_page_to_first(self):
+        self.set_page_index(0)
+        return self.get_body()
 
     def set_page_length(self, page_length: int):
         self.page_length = page_length
-        self.last_page = _calculate_last_page(self.data_raw, page_length)
+        self.last_page_index = _calculate_last_page(self.data_raw, page_length)
 
 
 def convert_csv_line(csv_line: str) -> List[str]:
@@ -95,4 +106,4 @@ def _drop_empty_lines(lines: list[str]):
 
 
 def _calculate_last_page(data_raw: List[List[str]], page_length):
-    return math.ceil(len(data_raw) / page_length)
+    return math.ceil(len(data_raw) / page_length) - 1

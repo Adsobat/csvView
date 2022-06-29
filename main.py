@@ -1,7 +1,7 @@
 from enum import Enum
 
 import csv_table.csv_table as cvt
-from table_renderer.table_renderer import draw_table
+import table_renderer.table_renderer as tr
 import sys
 
 
@@ -37,12 +37,13 @@ def main(path: str, page_length: int):
     should_exit = False
     while not should_exit:
         render_table(table)
-        use_input = parse_user_input(input("F)irst page, P)revious page, N)ext page, L)ast page, E)xit \n"))
+        use_input = parse_user_input(
+            input("F)irst page, P)revious page, N)ext page, L)ast page, E)xit \n"))
 
         if use_input == UserInput.FIRST_PAGE:
-            table.set_page_index(0)
+            table.set_page_to_first()
         if use_input == UserInput.LAST_PATE:
-            table.set_page_index(table.get_last_page())
+            table.set_page_to_last()
         if use_input == UserInput.NEXT_PAGE:
             table.increment_page()
         if use_input == UserInput.PREVIOUS_PAGE:
@@ -52,7 +53,7 @@ def main(path: str, page_length: int):
 
 
 def render_table(table):
-    output = draw_table(table.caption, table.get_body())
+    output = tr.create_table_markup_str(table.caption, table.get_body())
     print(output)
 
 

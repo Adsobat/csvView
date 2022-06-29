@@ -8,7 +8,8 @@ import csv_table.csv_table as cvt
 SHORT_CSV = ["h1;h2;h 3",
              "1;ä;text space",
              "2;b;c",
-             "3;d;e"]
+             "3;d;e",
+             "4;f;g"]
 
 
 class CsvData(unittest.TestCase):
@@ -42,7 +43,7 @@ class CsvData(unittest.TestCase):
         # act
         table = CsvTable(SHORT_CSV, page_length=1)
         # assert
-        self.assertEqual(3, table.last_page)
+        self.assertEqual(3, table.last_page_index)
 
     def test_init_empty_csv(self):
         # arrange
@@ -107,6 +108,39 @@ class CsvData(unittest.TestCase):
         self.assertEqual("b", data[0][1], "data is wrong")
         self.assertEqual("c", data[0][2], "data is wrong")
 
+    def test_set_to_first_page(self):
+        table = CsvTable(SHORT_CSV, page_length=2)
+        table.set_page_index(2)
+
+        data = table.set_page_to_first()
+
+        self.assertEqual(2, len(data), "amount of returned rows is wrong")
+        self.assertEqual(3, len(data[0]), "amount of returned columns is wrong")
+        self.assertEqual("1", data[0][0], "data is wrong")
+        self.assertEqual("ä", data[0][1], "data is wrong")
+        self.assertEqual("text space", data[0][2], "data is wrong")
+        self.assertEqual("2", data[1][0], "data is wrong")
+        self.assertEqual("b", data[1][1], "data is wrong")
+        self.assertEqual("c", data[1][2], "data is wrong")
+
+
+    def test_set_to_last_page(self):
+        table = CsvTable(SHORT_CSV, page_length=2)
+        table.set_page_index(0)
+
+        data = table.set_page_to_last()
+
+        self.assertEqual(2, len(data), "amount of returned rows is wrong")
+        self.assertEqual(3, len(data[0]), "amount of returned columns is wrong")
+        self.assertEqual("3", data[0][0], "data is wrong")
+        self.assertEqual("d", data[0][1], "data is wrong")
+        self.assertEqual("e", data[0][2], "data is wrong")
+        self.assertEqual("4", data[1][0], "data is wrong")
+        self.assertEqual("f", data[1][1], "data is wrong")
+        self.assertEqual("g", data[1][2], "data is wrong")
+
+
+
     def test_decrement_page(self):
         table = CsvTable(SHORT_CSV, page_length=1)
         table.set_page_index(1)
@@ -123,8 +157,6 @@ class CsvData(unittest.TestCase):
     def test_first_page(self):
         table = CsvTable(SHORT_CSV, page_length=2)
         table.set_page_index(2)
-
-
 
     def test_load_csv_from_file(self):
         path = "resources/testData.csv"

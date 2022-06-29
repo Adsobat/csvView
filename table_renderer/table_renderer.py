@@ -24,7 +24,7 @@ def _render_data(data: List[List[str]],  _padding: list[list[str]]) -> str:
     return table_body
 
 
-def draw_table(caption: list[str], body: list[list[str]]) -> str:
+def create_table_markup_str(caption: list[str], body: list[list[str]]) -> str:
     caption_padding, column_padding = _calculate_padding_for_table(caption, body)
     table_string = _render_header(caption, caption_padding)
     table_string = table_string + "\n" + _render_data(body, column_padding)
