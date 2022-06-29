@@ -31,12 +31,20 @@ def parse_user_input(user_input: str) -> UserInput:
         return UserInput.NOT_PARSED
 
 
+def render_page_count(table):
+    current_page_number = table.get_current_page_index() + 1
+    last_page_number = table.get_last_page_index() + 1
+    print("Page {current} of {max}".format(current=current_page_number, max=last_page_number))
+    pass
+
+
 def main(path: str, page_length: int):
     table = cvt.load_csv(path)
     table.set_page_length(page_length)
     should_exit = False
     while not should_exit:
         render_table(table)
+        render_page_count(table)
         use_input = parse_user_input(
             input("F)irst page, P)revious page, N)ext page, L)ast page, E)xit \n"))
 
