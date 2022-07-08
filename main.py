@@ -1,3 +1,4 @@
+import logging
 from enum import Enum
 
 import csv_table.csv_table as cvt
@@ -11,10 +12,11 @@ class UserInput(Enum):
     NEXT_PAGE = 2
     LAST_PATE = 3
     EXIT = 4
-    NOT_PARSED = 5
+    JUMP = 5
+    NOT_PARSED = 6
 
 
-def render_menue():
+def render_menu():
     print("F)irst page, P)revious page, N)ext page, L)ast page, E)xit")
 
 
@@ -27,15 +29,10 @@ def parse_user_input(user_input: str) -> UserInput:
         return UserInput.NEXT_PAGE
     if user_input in ["E", "e", "Exit", "exit"]:
         return UserInput.EXIT
+    if user_input in ["J", "j", "Jump", "jump"]:
+        return UserInput.JUMP
     else:
         return UserInput.NOT_PARSED
-
-
-def render_page_count(table):
-    current_page_number = table.get_current_page_index() + 1
-    last_page_number = table.get_last_page_index() + 1
-    print("Page {current} of {max}".format(current=current_page_number, max=last_page_number))
-    pass
 
 
 def main(path: str, page_length: int):
@@ -46,22 +43,37 @@ def main(path: str, page_length: int):
         render_table(table)
         render_page_count(table)
         use_input = parse_user_input(
-            input("F)irst page, P)revious page, N)ext page, L)ast page, E)xit \n"))
+            input("F)irst page, P)revious page, N)ext page, L)ast page, J)ump to page, E)xit \n"))
 
-        if use_input == UserInput.FIRST_PAGE:
-            table.set_page_to_first()
-        if use_input == UserInput.LAST_PATE:
-            table.set_page_to_last()
-        if use_input == UserInput.NEXT_PAGE:
-            table.increment_page()
-        if use_input == UserInput.PREVIOUS_PAGE:
-            table.decrement_page()
+        handle_user_input(table, use_input)
 
         should_exit = use_input == UserInput.EXIT
 
 
+def handle_user_input(table, use_input):
+    if use_input == UserInput.FIRST_PAGE:
+        table.set_page_to_first()
+    if use_input == UserInput.LAST_PATE:
+        table.set_page_to_last()
+    if use_input == UserInput.NEXT_PAGE:
+        table.increment_page()
+    if use_input == UserInput.PREVIOUS_PAGE:
+        table.decrement_page()
+    if use_input == UserInput.JUMP:
+        page_nr = input("jump to number: \n")
+        try:
+            table.set_page_index(int(page_nr))
+        except ValueError:
+            print(f"{page_nr} is not a number")
+
+
 def render_table(table):
     output = tr.create_table_markup_str(table.caption, table.get_body())
+    print(output)
+
+
+def render_page_count(table):
+    output = tr.create_table_page_count(table.get_current_page_index(), table.get_last_page_index())
     print(output)
 
 

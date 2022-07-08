@@ -3,6 +3,34 @@ from typing import List
 from csv_table.csv_table import CsvTable
 
 
+def create_table_page_count(current_page_index: int, max_page_index: int):
+    return "Page {current} of {max}".format(current=current_page_index + 1, max=max_page_index + 1)
+
+
+def create_table_markup_str(caption: list[str], body: list[list[str]]) -> str:
+    caption, body = _add_table_numbering(caption, body)
+    caption_padding, column_padding = _calculate_padding_for_table(caption, body)
+    table_string = _render_header(caption, caption_padding)
+    table_string = table_string + "\n" + _render_data(body, column_padding)
+    return table_string
+
+
+def _add_table_numbering(caption: list[str], body: list[list[str]]) -> (list[str], list[list[str]]):
+    caption = ["No."] + caption
+    numbers = [i + 1 for i, _ in enumerate(body)]
+    body = [[str(nr)] + val for nr, val in zip(numbers, body)]
+    return caption, body
+
+
+def _calculate_padding_for_table(caption: list[str], body: list[list[str]]) -> tuple[list[str], list[list[str]]]:
+    column_width = _calculate_column_widths(caption, body)
+    caption_padding = _calculate_row_padding(caption, column_width)
+    body_padding = []
+    for row in body:
+        body_padding.append(_calculate_row_padding(row, column_width))
+    return caption_padding, body_padding
+
+
 def _render_header(caption: List[str], padding: list[str]) -> str:
     header = ""
     seperator = ""
@@ -13,31 +41,16 @@ def _render_header(caption: List[str], padding: list[str]) -> str:
     return header + "\n" + seperator
 
 
-def _render_data(data: List[List[str]],  _padding: list[list[str]]) -> str:
+def _render_data(data: List[List[str]], _padding: list[list[str]]) -> str:
     table_body = ""
     for i, row in enumerate(data):
         padded_row = ""
+        is_last_row = i >= len(data) - 1
         for j, ele in enumerate(row):
             col_content = ele + _padding[i][j]
             padded_row += col_content + "|"
-        table_body += padded_row + "\n"
+        table_body += padded_row if is_last_row else padded_row + "\n"
     return table_body
-
-
-def create_table_markup_str(caption: list[str], body: list[list[str]]) -> str:
-    caption_padding, column_padding = _calculate_padding_for_table(caption, body)
-    table_string = _render_header(caption, caption_padding)
-    table_string = table_string + "\n" + _render_data(body, column_padding)
-    return table_string
-
-
-def _calculate_padding_for_table(caption: list[str], body: list[list[str]]) -> tuple[list[str], list[list[str]]]:
-    column_width = _calculate_column_widths(caption, body)
-    caption_padding = _calculate_row_padding(caption, column_width)
-    body_padding = []
-    for row in body:
-        body_padding.append(_calculate_row_padding(row, column_width))
-    return caption_padding, body_padding
 
 
 def _calculate_row_padding(row: list[str], column_width: list[int]):
